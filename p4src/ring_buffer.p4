@@ -13,7 +13,6 @@
 Register <bit<LOG_CAPACITY>> (1) head;
 Register <bit<LOG_CAPACITY>> (1) tail;
 Register <bit<LOG_CAPACITY>> (1) capacity;
-Register <bit<LOG_CAPACITY>> (1) size;
 Register <bit<ELT_SIZE>> (CAPACITY) ring_buffer; 
 
 
@@ -21,16 +20,20 @@ Register <bit<ELT_SIZE>> (CAPACITY) ring_buffer;
 head.write(0, 0);
 tail.write(0, -1);
 capacity.write(0, CAPACITY);
-size.write(0, 0);
-
 
 /*ENQUEUE*/
 
 control Enqueue() {
     action inc_tail_action() {
 	Register <bit <LOG_CAPACITY>> tmp_tail;
+	Register <bit <LOG_CAPACITY>> tmp_cap;
 	tail.read(tmp_tail, 0);
-	tail.write(0, tmp_tail + 1);
+	capacity.read(tmp_cap, 0);
+	IF (tmp_tail < tmp_cap-1) {
+	    tail.write(0, tmp_tail + 1);
+	} ELSE {
+	    tail.write(0, 0); /*ring -> mod*/
+	}
     }
 
     action inc_size_action() {
@@ -39,7 +42,7 @@ control Enqueue() {
 	size.write(0, tmp_size + 1);
     }    
 
-    action enq_action(value) { /*HOW TO CAPTURE THIS VALUE?? METADATA?*/
+    action enq_action(inout value) { /*how to get input value???*/
 	Register <bit <LOG_CAPACITY>> tmp_tail;
 	tail.read(tmp_tail, 0);
 	ring_buffer.write(tail, value);
@@ -62,24 +65,12 @@ control Enqueue() {
 	default_action = enq_action
     }
 
-
-    table inc_size {
-	actions = {
-	    inc_size_action;
-	}
-
-	default_action = inc_size_action;
-    }
-
     apply {
 	size.read(size_value, 0);
 	capacity.read(capacity_value, 0);
-	IF (size_value < capacity_value) {
+	IF (size_value <= capacity_value) {
 	    inc_tail.apply();
 	    enq_arr.apply();
-	    inc_size.apply();
-	} ELSE {
-	     
 	}
     }
 }
