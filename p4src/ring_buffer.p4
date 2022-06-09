@@ -9,7 +9,7 @@
 #define ELT_SIZE 1
 #define LOG_CAPACITY 3
 
-struct meta {
+struct metadata {
     bit<ELT_SIZE>> enq_value;
     bit<ELT_SIZE>> deq_value;
 }
