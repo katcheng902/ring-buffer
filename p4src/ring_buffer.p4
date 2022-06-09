@@ -5,7 +5,7 @@
 #include "include/headers.p4"
 #include "include/parsers.p4"
 
-#registers (begin with capacity 7, 160 bit entries)
+#REGISTERS (begin with capacity 7, 160 bit entries)
 Register <bit<3>> (1) head;
 Register <bit<3>> (1) tail;
 Register <bit<3>> (1) capacity;
@@ -14,6 +14,14 @@ Register <bit<160>> (8) ring_buffer;
 
 capacity.write(0, 111); #capacity = 7
 
+/*
+control CreateRingBuffer(inout headers hdr,
+                  inout metadata meta,
+                  inout standard_metadata_t standard_metadata) {
+
+
+
+}*/
 
 /************************************************************************
 *************************    E N Q U E U E   ****************************
