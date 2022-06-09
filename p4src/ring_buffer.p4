@@ -5,9 +5,9 @@
 #include "include/headers.p4"
 #include "include/parsers.p4"
 
-#define CAPACITY 8
-#define ELT_SIZE 1
-#define LOG_CAPACITY 3
+#define CAPACITY 2
+#define ELT_SIZE 73
+#define LOG_CAPACITY 1
 
 struct metadata {
     bit<ELT_SIZE>> enq_value;
@@ -28,7 +28,7 @@ capacity.write(0, CAPACITY);
 
 /*ENQUEUE*/
 
-control Enqueue(inout metadata meta) { /*in which parameter will the value be??*/
+control Enqueue(inout metadata meta) {
     action inc_tail_action() {
 	Register <bit <LOG_CAPACITY>> tmp_tail;
 	Register <bit <LOG_CAPACITY>> tmp_cap;
@@ -137,43 +137,45 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
 }
 
 
-/*************************************************************************
-**************  I N G R E S S   P R O C E S S I N G   *******************
+ N G R E S S   P R O C E S S I N G   *******************
 *************************************************************************/
 
 control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
 
+    /* define two actions, drop and forward */
     action drop() {
 
         mark_to_drop(standard_metadata);
     }
 
-    // TODO: define ingress processing logic
-    action forward(egressSpec_t port) {
-        // set the egress port
-        standard_metadata.egress_spec = port;
-        //hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
-        //hdr.ethernet.dstAddr = dstAddr;
-        //hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+    /* forward action takes as input the egress_port */
+    /* set the output port to that argument */
+    action forward(bit<9> egress_port) {
+        standard_metadata.egress_spec = egress_port;
     }
-    
-    table ipv4_lpm {
+
+    /* define the dmac table, serving as the forwarding table */
+    table dmac {
+        /* match the ethernet destination address */
         key = {
-            hdr.ipv4.dstAddr: exact;
+            hdr.ethernet.dstAddr: exact;
         }
+
+        /* define the list of actions */
         actions = {
-          forward;
-          drop;
+            forward;
+            drop;
+            NoAction;
         }
-        default_action = drop();
+        size = 256;
+        default_action = NoAction;
     }
-    
+
     apply {
 
-        // TODO: call the table
-        ipv4_lpm.apply();
+        dmac.apply();
 
     }
 }
@@ -194,26 +196,16 @@ control MyEgress(inout headers hdr,
 *************   C H E C K S U M    C O M P U T A T I O N   **************
 *************************************************************************/
 
+/*************************************************************************
+*************   C H E C K S U M    C O M P U T A T I O N   **************
+*************************************************************************/
+
 control MyComputeChecksum(inout headers hdr, inout metadata meta) {
-    apply {
-    update_checksum(
-	    hdr.ipv4.isValid(),
-            { hdr.ipv4.version,
-	          hdr.ipv4.ihl,
-              hdr.ipv4.dscp,
-              hdr.ipv4.ecn,
-              hdr.ipv4.totalLen,
-              hdr.ipv4.identification,
-              hdr.ipv4.flags,
-              hdr.ipv4.fragOffset,
-              hdr.ipv4.ttl,
-              hdr.ipv4.protocol,
-              hdr.ipv4.srcAddr,
-              hdr.ipv4.dstAddr },
-              hdr.ipv4.hdrChecksum,
-              HashAlgorithm.csum16);    
+     apply {
+
     }
 }
+
 
 
 
