@@ -9,6 +9,11 @@
 #define ELT_SIZE 1
 #define LOG_CAPACITY 3
 
+struct meta {
+    bit<ELT_SIZE>> enq_value;
+    bit<ELT_SIZE>> deq_value;
+}
+
 /*REGISTERS*/
 Register <bit<LOG_CAPACITY>> (1) head;
 Register <bit<LOG_CAPACITY>> (1) tail;
@@ -23,15 +28,15 @@ capacity.write(0, CAPACITY);
 
 /*ENQUEUE*/
 
-control Enqueue() { /*in which parameter will the value be??*/
+control Enqueue(inout metadata meta) { /*in which parameter will the value be??*/
     action inc_tail_action() {
 	Register <bit <LOG_CAPACITY>> tmp_tail;
 	Register <bit <LOG_CAPACITY>> tmp_cap;
 	tail.read(tmp_tail, 0);
 	capacity.read(tmp_cap, 0);
-	IF (tmp_tail < tmp_cap-1) {
+	if (tmp_tail < tmp_cap-1) {
 	    tail.write(0, tmp_tail + 1);
-	} ELSE {
+	} else {
 	    tail.write(0, 0); /*ring -> mod*/
 	}
     }
@@ -42,10 +47,10 @@ control Enqueue() { /*in which parameter will the value be??*/
 	size.write(0, tmp_size + 1);
     }    
 
-    action enq_action(inout value) { /*how to get input value???*/
+    action enq_action() { /*how to get input value???*/
 	Register <bit <LOG_CAPACITY>> tmp_tail;
 	tail.read(tmp_tail, 0);
-	ring_buffer.write(tail, value);
+	ring_buffer.write(tail, meta.enq_value);
     }
 
     table inc_tail {
@@ -68,7 +73,7 @@ control Enqueue() { /*in which parameter will the value be??*/
     apply {
 	size.read(size_value, 0);
 	capacity.read(capacity_value, 0);
-	IF (size_value <= capacity_value) {
+	if (size_value <= capacity_value) {
 	    inc_tail.apply();
 	    enq_arr.apply();
 	}
@@ -78,12 +83,12 @@ control Enqueue() { /*in which parameter will the value be??*/
 
 /*DEQUEUE*/
 
-control Dequeue() {
+control Dequeue(inout metadata meta) {
 
     action deq_arr_action() {
 	Register <bit <LOG_CAPACITY>> tmp_head;
 	head.read(tmp_head, 0);
-	/*ring_buffer.read(SOMETHING, head);*/
+	/*ring_buffer.read(deq_value, head);*/
     }
 
     action inc_head_action() {
@@ -91,9 +96,9 @@ control Dequeue() {
         Register <bit <LOG_CAPACITY>> tmp_cap;
         head.read(tmp_head, 0);
         capacity.read(tmp_cap, 0);
-        IF (tmp_head < tmp_cap-1) {
+        if (tmp_head < tmp_cap-1) {
             head.write(0, tmp_head + 1);
-        } ELSE {
+        } else {
             head.write(0, 0); /*ring -> mod*/
         }
     }
@@ -121,7 +126,7 @@ control Dequeue() {
 
 }
 
-
+/*I G N O R E     B E L O W */
 
 /*************************************************************************
 ************   C H E C K S U M    V E R I F I C A T I O N   *************
