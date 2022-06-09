@@ -47,10 +47,10 @@ control Enqueue(inout metadata meta) { /*in which parameter will the value be??*
 	size.write(0, tmp_size + 1);
     }    
 
-    action enq_action() { /*how to get input value???*/
+    action enq_action(enq_value) { /*how to get input value???*/
 	Register <bit <LOG_CAPACITY>> tmp_tail;
 	tail.read(tmp_tail, 0);
-	ring_buffer.write(tail, meta.enq_value);
+	ring_buffer.write(tail, enq_value);
     }
 
     table inc_tail {
@@ -85,10 +85,10 @@ control Enqueue(inout metadata meta) { /*in which parameter will the value be??*
 
 control Dequeue(inout metadata meta) {
 
-    action deq_arr_action() {
+    action deq_arr_action(out deq_value) {
 	Register <bit <LOG_CAPACITY>> tmp_head;
 	head.read(tmp_head, 0);
-	/*ring_buffer.read(deq_value, head);*/
+	ring_buffer.read(deq_value, head);
     }
 
     action inc_head_action() {
