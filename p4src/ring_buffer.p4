@@ -23,7 +23,7 @@ capacity.write(0, CAPACITY);
 
 /*ENQUEUE*/
 
-control Enqueue() {
+control Enqueue() { /*in which parameter will the value be??*/
     action inc_tail_action() {
 	Register <bit <LOG_CAPACITY>> tmp_tail;
 	Register <bit <LOG_CAPACITY>> tmp_cap;
@@ -76,13 +76,48 @@ control Enqueue() {
 }
 
 
-/************************************************************************
-*************************    D E Q U E U E   ****************************
-*************************************************************************/
+/*DEQUEUE*/
 
 control Dequeue() {
+
+    action deq_arr_action() {
+	Register <bit <LOG_CAPACITY>> tmp_head;
+	head.read(tmp_head, 0);
+	/*ring_buffer.read(SOMETHING, head);*/
+    }
+
+    action inc_head_action() {
+	Register <bit <LOG_CAPACITY>> tmp_head;
+        Register <bit <LOG_CAPACITY>> tmp_cap;
+        head.read(tmp_head, 0);
+        capacity.read(tmp_cap, 0);
+        IF (tmp_head < tmp_cap-1) {
+            head.write(0, tmp_head + 1);
+        } ELSE {
+            head.write(0, 0); /*ring -> mod*/
+        }
+    }
 	
-    table update
+    table deq_arr {
+	actions = {
+	    deq_arr_action;
+	}
+	
+	default_action = deq_arr_action;
+    }
+
+    table inc_head {
+	actions = {
+	    inc_head_action;
+	}
+
+	default_action = inc_head_action;
+    }
+
+    apply {
+	deq_arr.apply();
+	inc_head.apply();
+    }
 
 }
 
