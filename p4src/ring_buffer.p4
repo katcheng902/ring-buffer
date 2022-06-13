@@ -4,34 +4,27 @@
 
 #include "include/headers.p4"
 #include "include/parsers.p4"
+#include "include/define.p4"
 
-#define CAPACITY 2
-#define ELT_SIZE 73
-#define LOG_CAPACITY 1
-
-struct metadata {
-    bit<ELT_SIZE>> enq_value;
-    bit<ELT_SIZE>> deq_value;
-}
-
-/*REGISTERS*/
-Register <bit<LOG_CAPACITY>> (1) head;
-Register <bit<LOG_CAPACITY>> (1) tail;
-Register <bit<LOG_CAPACITY>> (1) capacity;
-Register <bit<ELT_SIZE>> (CAPACITY) ring_buffer; 
-
+/*REGISTERS -- store as metadata/somehow inside the buffer??*/
+register<bit<LOG_CAPACITY>>(1) head;
+register<bit<LOG_CAPACITY>>(1) tail;
+register<bit<LOG_CAPACITY>>(1) capacity;
+register<bit<LOG_CAPACITY>>(1) buffer_size;
+register<bit<ELT_SIZE>>(CAPACITY) ring_buffer;
 
 /*initialize*/
-head.write(0, 0);
+head.write((bit<32> 0), (bit<ELT_SIZE> 0));
 tail.write(0, -1);
 capacity.write(0, CAPACITY);
+buffer_size.write(0, 0);
 
 /*ENQUEUE*/
 
 control Enqueue(inout metadata meta) {
     action inc_tail_action() {
-	Register <bit <LOG_CAPACITY>> tmp_tail;
-	Register <bit <LOG_CAPACITY>> tmp_cap;
+	bit<LOG_CAPACITY> tmp_tail;
+	bit<LOG_CAPACITY> tmp_cap;
 	tail.read(tmp_tail, 0);
 	capacity.read(tmp_cap, 0);
 	if (tmp_tail < tmp_cap-1) {
@@ -42,15 +35,15 @@ control Enqueue(inout metadata meta) {
     }
 
     action inc_size_action() {
-	Register <bit <LOG_CAPACITY>> tmp_size;
-	size.read(tmp_size, 0);
-	size.write(0, tmp_size + 1);
+	bit<LOG_CAPACITY> tmp_size;
+	buffer_size.read(tmp_size, 0);
+	buffer_size.write(0, tmp_size + 1);
     }    
 
-    action enq_action(enq_value) { /*how to get input value???*/
-	Register <bit <LOG_CAPACITY>> tmp_tail;
+    action enq_action() {
+	bit<LOG_CAPACITY> tmp_tail;
 	tail.read(tmp_tail, 0);
-	ring_buffer.write(tail, enq_value);
+	ring_buffer.write(tail, meta.enq_value);
     }
 
     table inc_tail {
@@ -67,13 +60,15 @@ control Enqueue(inout metadata meta) {
 	    enq_action;
 	}
 
-	default_action = enq_action
+	default_action = enq_action;
     }
 
     apply {
-	size.read(size_value, 0);
-	capacity.read(capacity_value, 0);
-	if (size_value <= capacity_value) {
+	bit<LOG_CAPACITY> tmp_size;
+	bit<LOG_CAPACITY> tmp_capacity;
+	buffer_size.read(tmp_size, 0);
+	capacity.read(tmp_capacity, 0);
+	if (tmp_size <= tmp_capacity) {
 	    inc_tail.apply();
 	    enq_arr.apply();
 	}
@@ -85,15 +80,15 @@ control Enqueue(inout metadata meta) {
 
 control Dequeue(inout metadata meta) {
 
-    action deq_arr_action(out deq_value) {
-	Register <bit <LOG_CAPACITY>> tmp_head;
+    action deq_arr_action() {
+	bit<LOG_CAPACITY> tmp_head;
 	head.read(tmp_head, 0);
-	ring_buffer.read(deq_value, head);
+	ring_buffer.read(meta.deq_value, head);
     }
 
     action inc_head_action() {
-	Register <bit <LOG_CAPACITY>> tmp_head;
-        Register <bit <LOG_CAPACITY>> tmp_cap;
+	bit<LOG_CAPACITY> tmp_head;
+        bit<LOG_CAPACITY> tmp_cap;
         head.read(tmp_head, 0);
         capacity.read(tmp_cap, 0);
         if (tmp_head < tmp_cap-1) {
@@ -102,6 +97,13 @@ control Dequeue(inout metadata meta) {
             head.write(0, 0); /*ring -> mod*/
         }
     }
+
+    action dec_size_action() {
+         bit<LOG_CAPACITY> tmp_size;
+         buffer_size.read(tmp_size, 0);
+         buffer_size.write(0, tmp_size - 1);
+    }
+
 	
     table deq_arr {
 	actions = {
@@ -119,9 +121,22 @@ control Dequeue(inout metadata meta) {
 	default_action = inc_head_action;
     }
 
+    table dec_size {
+	actions = {
+	    dec_size_action;
+	}
+
+	default_action = dec_size_action;
+    }
+
     apply {
-	deq_arr.apply();
-	inc_head.apply();
+	 bit<LOG_CAPACITY> tmp_size;
+	 buffer_size.read(tmp_size, 0);
+         if (tmp_size > 0) {
+	     deq_arr.apply();
+	     inc_head.apply();
+	     dec_size.apply();
+	 }
     }
 
 }
@@ -136,8 +151,8 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
     apply {  }
 }
 
-
- N G R E S S   P R O C E S S I N G   *******************
+/************************************************************************
+**************   I N G R E S S   P R O C E S S I N G   *******************
 *************************************************************************/
 
 control MyIngress(inout headers hdr,
@@ -196,17 +211,11 @@ control MyEgress(inout headers hdr,
 *************   C H E C K S U M    C O M P U T A T I O N   **************
 *************************************************************************/
 
-/*************************************************************************
-*************   C H E C K S U M    C O M P U T A T I O N   **************
-*************************************************************************/
-
 control MyComputeChecksum(inout headers hdr, inout metadata meta) {
      apply {
 
     }
 }
-
-
 
 
 /*************************************************************************
