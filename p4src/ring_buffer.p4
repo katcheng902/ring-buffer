@@ -7,17 +7,76 @@
 #include "include/define.p4"
 
 /*REGISTERS -- store as metadata/somehow inside the buffer??*/
-register<bit<LOG_CAPACITY>>(1) head;
-register<bit<LOG_CAPACITY>>(1) tail;
-register<bit<LOG_CAPACITY>>(1) capacity;
-register<bit<LOG_CAPACITY>>(1) buffer_size;
+register<bit<32>>(1) head;
+register<bit<32>>(1) tail;
+register<bit<32>>(1) capacity;
+register<bit<32>>(1) buffer_size;
 register<bit<ELT_SIZE>>(CAPACITY) ring_buffer;
 
-/*initialize*/
+/*initialize
 head.write((bit<32> 0), (bit<ELT_SIZE> 0));
 tail.write(0, -1);
 capacity.write(0, CAPACITY);
 buffer_size.write(0, 0);
+*/
+
+control Initialize() {
+    action init_head_action() {
+	head.write(0, 0);
+    }
+
+    action init_tail_action() {
+        tail.write(0, -1);
+    }
+
+    action init_capacity_action() {
+        capacity.write(0, CAPACITY);
+    }
+
+    action init_size_action() {
+        buffer_size.write(0, 0);
+    }
+
+    table init_head {
+	actions = {
+	    init_head_action;
+	}
+
+	default_action = init_head_action;
+    }
+
+    table init_tail {
+        actions = {
+            init_tail_action;
+        }
+
+        default_action = init_tail_action;
+    }
+
+    table init_capacity {
+        actions = {
+            init_capacity_action;
+        }
+
+        default_action = init_capacity_action;
+    }
+
+    table init_size {
+        actions = {
+            init_size_action;
+        }
+
+        default_action = init_size_action;
+    }
+
+    apply {
+	init_head.apply();
+	init_tail.apply();
+	init_capacity.apply();
+	init_size.apply();
+    }
+}
+
 
 /*ENQUEUE*/
 
