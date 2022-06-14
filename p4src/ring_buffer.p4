@@ -6,27 +6,21 @@
 #include "include/parsers.p4"
 #include "include/define.p4"
 
-/*REGISTERS -- store as metadata/somehow inside the buffer??*/
+/*REGISTERS*/
 register<bit<LOG_CAPACITY>>(1) head;
 register<bit<LOG_CAPACITY>>(1) tail;
 register<bit<LOG_CAPACITY>>(1) capacity;
 register<bit<LOG_CAPACITY>>(1) buffer_size;
 register<bit<ELT_SIZE>>(CAPACITY) ring_buffer;
 
-/*initialize
-head.write((bit<32> 0), (bit<ELT_SIZE> 0));
-tail.write(0, -1);
-capacity.write(0, CAPACITY);
-buffer_size.write(0, 0);
-*/
-
-control Initialize() {
+control Initialize(inout metadata meta) {
     action init_head_action() {
 	head.write(0, 0);
     }
 
     action init_tail_action() {
-        tail.write(0, -1); /*BIT<> IS UNSIGNED!!! so fix*/
+        tail.write(0, 0);
+	meta.enq_time = 0;
     }
 
     action init_capacity_action() {
@@ -127,7 +121,7 @@ control Enqueue(inout metadata meta) {
 	    inc_size_action;
 	}
 
-	default_action = inc-size_action;
+	default_action = inc_size_action;
     }
 
     apply {
@@ -135,8 +129,12 @@ control Enqueue(inout metadata meta) {
 	bit<LOG_CAPACITY> tmp_capacity;
 	buffer_size.read(tmp_size, 0);
 	capacity.read(tmp_capacity, 0);
-	if (tmp_size <= tmp_capacity) {
-	    inc_tail.apply();
+	if (tmp_size <= tmp_capacity) { /*want this?? or just override when size gets to big*/
+	    if (meta.enq_time > 0) { /*0 if first time around (i.e., tail should've been -1), 1 otherwise*/
+		inc_tail.apply();
+	    } else {
+		meta.enq_time = 1;
+	    }
 	    enq_arr.apply();
 	    inc_size.apply();
 	}
