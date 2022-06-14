@@ -1,3 +1,5 @@
+#include "define.p4"
+
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
@@ -52,8 +54,8 @@ header tcp_t{
 }
 
 struct metadata {
-    bit<14> ecmp_hash;
-    bit<14> ecmp_group_id;
+    bit<ELT_SIZE> enq_value;
+    bit<ELT_SIZE> deq_value;
 }
 
 struct headers {

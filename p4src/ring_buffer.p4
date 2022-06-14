@@ -7,10 +7,10 @@
 #include "include/define.p4"
 
 /*REGISTERS -- store as metadata/somehow inside the buffer??*/
-register<bit<32>>(1) head;
-register<bit<32>>(1) tail;
-register<bit<32>>(1) capacity;
-register<bit<32>>(1) buffer_size;
+register<bit<LOG_CAPACITY>>(1) head;
+register<bit<LOG_CAPACITY>>(1) tail;
+register<bit<LOG_CAPACITY>>(1) capacity;
+register<bit<LOG_CAPACITY>>(1) buffer_size;
 register<bit<ELT_SIZE>>(CAPACITY) ring_buffer;
 
 /*initialize
@@ -26,7 +26,7 @@ control Initialize() {
     }
 
     action init_tail_action() {
-        tail.write(0, -1);
+        tail.write(0, -1); /*BIT<> IS UNSIGNED!!! so fix*/
     }
 
     action init_capacity_action() {
@@ -102,7 +102,7 @@ control Enqueue(inout metadata meta) {
     action enq_action() {
 	bit<LOG_CAPACITY> tmp_tail;
 	tail.read(tmp_tail, 0);
-	ring_buffer.write(tail, meta.enq_value);
+	ring_buffer.write((bit<32>) tmp_tail, meta.enq_value);
     }
 
     table inc_tail {
@@ -122,6 +122,14 @@ control Enqueue(inout metadata meta) {
 	default_action = enq_action;
     }
 
+    table inc_size {
+	actions = {
+	    inc_size_action;
+	}
+
+	default_action = inc-size_action;
+    }
+
     apply {
 	bit<LOG_CAPACITY> tmp_size;
 	bit<LOG_CAPACITY> tmp_capacity;
@@ -130,6 +138,7 @@ control Enqueue(inout metadata meta) {
 	if (tmp_size <= tmp_capacity) {
 	    inc_tail.apply();
 	    enq_arr.apply();
+	    inc_size.apply();
 	}
     }
 }
@@ -142,7 +151,7 @@ control Dequeue(inout metadata meta) {
     action deq_arr_action() {
 	bit<LOG_CAPACITY> tmp_head;
 	head.read(tmp_head, 0);
-	ring_buffer.read(meta.deq_value, head);
+	ring_buffer.read(meta.deq_value, (bit<32>) tmp_head);
     }
 
     action inc_head_action() {
