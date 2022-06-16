@@ -3,10 +3,12 @@
 *************************************************************************************/
 
 /*REGISTERS*/
-register<bit<32>>(1) head_reg; /*32 bits instead of log(capacity) wasting space*/
+register<bit<32>>(1) head_reg; /*32 bits instead of log(capacity) wastes space*/
 register<bit<32>>(1) tail_reg;
 register<bit<32>>(1) capacity_reg;
 register<bit<32>>(1) elt_reg;
+
+bit<32> element_width;
 
 action RingBuffer(in bit<32> capacity, in bit<32> elt_size) {
     register<bit<elt_size>>(capacity) buffer;
@@ -15,9 +17,10 @@ action RingBuffer(in bit<32> capacity, in bit<32> elt_size) {
     tail_reg.write(0, 0);
     capacity_reg.write(0, capacity); 
     elt_reg.write(0, elt_size);
+    elt_reg.read(element_width, 0);
 }
 
-action enqueue(in in_value) { /*in_value has type bit<size_reg>*/
+action enqueue(in bit<element_width> in_value) { /*in_value has type bit<elt_reg>*/
     /*increment tail mod cap*/
     bit<32> tmp_tail;
     bit<32> tmp_cap;
@@ -31,16 +34,16 @@ action enqueue(in in_value) { /*in_value has type bit<size_reg>*/
 
     /*enqueue*/
     tail_reg.read(tmp_tail, 0);
-    buffer.write(tmp_tail, in_value);
+    buffer.write((bit<32>)tmp_tail, in_value);
 
 }
 
-action dequeue(out out_value) {
+action dequeue(out bit<element_width> out_value) {
     bit<32> tmp_head;
     head_reg.read(tmp_head, 0);
 
     /*dequeue*/
-    buffer.read(out_value, tmp_head);
+    buffer.read(out_value, (bit<32>)tmp_head);
 
     /*increment head mod cap*/
     bit<32> tmp_cap;
