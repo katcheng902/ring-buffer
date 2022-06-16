@@ -1,26 +1,23 @@
 /*************************************************************************************
 **************************** R I N G    B U F F E R *********************************
 *************************************************************************************/
+#define CAPACITY 8
+#define ELT_SIZE 2
 
-/*REGISTERS*/
+/*registers*/
 register<bit<32>>(1) head_reg; /*32 bits instead of log(capacity) wastes space*/
 register<bit<32>>(1) tail_reg;
-register<bit<32>>(1) capacity_reg;
-register<bit<32>>(1) elt_reg;
 
-bit<32> element_width;
+register<bit<ELT_SIZE>>(CAPACITY) buffer;
 
-action RingBuffer(in bit<32> capacity, in bit<32> elt_size) {
-    register<bit<elt_size>>(capacity) buffer;
-     
+
+action initialize_buffer() {
+    /*intialize values*/
     head_reg.write(0, 0);
     tail_reg.write(0, 0);
-    capacity_reg.write(0, capacity); 
-    elt_reg.write(0, elt_size);
-    elt_reg.read(element_width, 0);
 }
 
-action enqueue(in bit<element_width> in_value) { /*in_value has type bit<elt_reg>*/
+action enqueue_buffer(in bit<ELT_SIZE> in_value) {
     /*increment tail mod cap*/
     bit<32> tmp_tail;
     bit<32> tmp_cap;
@@ -38,7 +35,7 @@ action enqueue(in bit<element_width> in_value) { /*in_value has type bit<elt_reg
 
 }
 
-action dequeue(out bit<element_width> out_value) {
+action dequeue_buffer(out bit<ELT_SIZE> out_value) {
     bit<32> tmp_head;
     head_reg.read(tmp_head, 0);
 
