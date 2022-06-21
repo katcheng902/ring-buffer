@@ -53,7 +53,6 @@ control MyIngress(inout headers hdr,
     }
 
     apply {
-	initialize_buffer();
         dmac.apply();
 
     }

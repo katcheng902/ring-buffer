@@ -9,24 +9,17 @@ register<bit<32>>(1) tail_reg;
 
 register<bit<ELT_SIZE>>(CAPACITY) buffer;
 
-
-action initialize_buffer() {
-    /*intialize values*/
-    head_reg.write(0, 0);
-    tail_reg.write(0, 0);
-}
-
-action enqueue_buffer(in bit<ELT_SIZE> in_value) {
+action enqueue_buffer(bit<ELT_SIZE> in_value) {
     /*increment tail mod cap*/
     bit<32> tmp_tail;
    /* bit<32> tmp_cap;*/
     tail_reg.read(tmp_tail, 0);
 /*    capacity_reg.read(tmp_cap, 0);*/
-    if (tmp_tail < CAPACITY - 1) {
+/*    if (tmp_tail < CAPACITY - 1) { */
         tail_reg.write(0, tmp_tail + 1);
-    } else {
+/*    } else {
         tail_reg.write(0, 0);
-    }
+    }*/
 
     /*enqueue*/
     tail_reg.read(tmp_tail, 0);
@@ -44,11 +37,11 @@ action dequeue_buffer(out bit<ELT_SIZE> out_value) {
     /*increment head mod cap*/
    /* bit<32> tmp_cap;
     capacity_reg.read(tmp_cap, 0);*/
-    if (tmp_head < CAPACITY - 1) {
+/*    if (tmp_head < CAPACITY - 1) {*/
         head_reg.write(0, tmp_head + 1);
-    } else {
+/*    } else {
         head_reg.write(0, 0);
-    }
+    }*/
 
 }
 
