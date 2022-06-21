@@ -1,5 +1,6 @@
 from p4utils.utils.topology import Topology
 from p4utils.utils.sswitch_API import SimpleSwitchAPI
+import sys
 
 class RoutingController(object):
 
@@ -40,7 +41,7 @@ class RoutingController(object):
                 # table_add function: create a rule in "dmac" table, the key is the dmac address
                 # the action is "forward", and the parameter is the output port id
                 # E.g., when receiving a packet to "00:00:0a:00:00:01", "forward" the packet to "1" port.
-                controller.table_add("dmac", "forward", ["00:00:0a:00:00:01"], ["1"])
+                controller.table_add("dmac", "enqueue_buffer", ["00:00:0a:00:00:01"], ["01"])
                 controller.table_add("dmac", "forward", ["00:00:0a:00:00:02"], ["2"])
 
     def main(self):

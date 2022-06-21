@@ -1,10 +1,10 @@
-/* -*- P4_16 -*- */
+/* -*- P4_16 -*- */ 
 #include <core.p4>
 #include <v1model.p4>
 
 #include "include/headers.p4"
 #include "include/parsers.p4"
-
+#include "ring_buffer.p4"
 
 /*************************************************************************
 ************   C H E C K S U M    V E R I F I C A T I O N   *************
@@ -44,6 +44,7 @@ control MyIngress(inout headers hdr,
         /* define the list of actions */
         actions = {
             forward;
+	    enqueue_buffer;
             drop;
             NoAction;
         }
@@ -52,6 +53,7 @@ control MyIngress(inout headers hdr,
     }
 
     apply {
+	initialize_buffer();
         dmac.apply();
 
     }
@@ -93,6 +95,3 @@ MyEgress(),
 MyComputeChecksum(),
 MyDeparser()
 ) main;
-                                                                                                                                                                    142,1         Bot
-
-                                                                                      
