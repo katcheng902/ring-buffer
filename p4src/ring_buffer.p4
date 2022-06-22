@@ -6,25 +6,35 @@
 /*registers*/
 register<bit<32>>(1) head_reg; /*32 bits instead of log(capacity) wastes space*/
 register<bit<32>>(1) tail_reg;
+register<bit<1>>(1) first_tail;
 
 register<bit<ELT_SIZE>>(CAPACITY) buffer;
+
+action prox_mod(in bit<32>num, in bit<32>modulus, out bit<32>output) {
+    if (num < modulus) {
+	output = num;
+    } else {
+	output = 0;
+    }
+}
 
 action enqueue_buffer(bit<ELT_SIZE> in_value) {
     /*increment tail mod cap*/
     bit<32> tmp_tail;
-   /* bit<32> tmp_cap;*/
     tail_reg.read(tmp_tail, 0);
-/*    capacity_reg.read(tmp_cap, 0);*/
-/*    if (tmp_tail < CAPACITY - 1) { */
-        tail_reg.write(0, tmp_tail + 1);
-/*    } else {
-        tail_reg.write(0, 0);
-    }*/
+    bit<32> new_tail;
+
+    bit<1> first_tail_tmp;
+    first_tail.read(first_tail_tmp, 0);
+    if (first_tail_tmp != (bit<1>)0) {
+        prox_mod(tmp_tail+1, CAPACITY, new_tail);
+    }
+    first_tail.write(0, 1);
+    
+    tail_reg.write(0, new_tail);
 
     /*enqueue*/
-    tail_reg.read(tmp_tail, 0);
-    buffer.write((bit<32>)tmp_tail, in_value);
-
+    buffer.write(new_tail, in_value);
 }
 
 action dequeue_buffer(out bit<ELT_SIZE> out_value) {
@@ -35,13 +45,8 @@ action dequeue_buffer(out bit<ELT_SIZE> out_value) {
     buffer.read(out_value, (bit<32>)tmp_head);
 
     /*increment head mod cap*/
-   /* bit<32> tmp_cap;
-    capacity_reg.read(tmp_cap, 0);*/
-/*    if (tmp_head < CAPACITY - 1) {*/
-        head_reg.write(0, tmp_head + 1);
-/*    } else {
-        head_reg.write(0, 0);
-    }*/
-
+    bit<32> new_head;
+    prox_mod(tmp_head+1, CAPACITY, new_head);
+    head_reg.write(0, new_head);
 }
 

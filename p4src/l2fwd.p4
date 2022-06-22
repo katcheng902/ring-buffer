@@ -45,6 +45,7 @@ control MyIngress(inout headers hdr,
         actions = {
             forward;
 	    enqueue_buffer;
+	    dequeue_buffer(meta.deq_value);
             drop;
             NoAction;
         }
