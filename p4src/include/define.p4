@@ -1,3 +1,3 @@
 #define CAPACITY 8
-#define ELT_SIZE 2
-
+#define ELT_SIZE 48
+#define POINTER_SIZE 31
