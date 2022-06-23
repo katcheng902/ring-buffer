@@ -56,13 +56,6 @@ header tcp_t{
 struct metadata {
     bit<ELT_SIZE> enq_value;
     bit<ELT_SIZE> deq_value;
-    
-    bit<1> enq_time; /*0 if first time aroud, 1 otherwise*/
-
-    bit<LOG_CAPACITY> head;
-    bit<LOG_CAPACITY> tail;
-    bit<LOG_CAPACITY> size;
-    bit<LOG_CAPACITY> capacity;
 }
 
 struct headers {
