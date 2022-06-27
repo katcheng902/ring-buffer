@@ -1,0 +1,202 @@
+Warning: you requested the nanomsg event logger, but bmv2 was compiled without -DBMELOG, and the event logger cannot be activated
+Calling target program-options parser
+[12:24:10.393] [bmv2] [D] [thread 5817] Set default default entry for table 'MyIngress.Enqueue.init_enq_table': MyIngress.Enqueue.init_enq - 
+[12:24:10.393] [bmv2] [D] [thread 5817] Set default default entry for table 'MyIngress.Enqueue.tail_table': MyIngress.Enqueue.set_first_tail_to_one - 
+[12:24:10.393] [bmv2] [D] [thread 5817] Set default default entry for table 'MyIngress.Enqueue.enqueue_table': MyIngress.Enqueue.enqueue_action - 
+[12:24:10.393] [bmv2] [D] [thread 5817] Set default default entry for table 'MyIngress.Enqueue.size_table': MyIngress.Enqueue.inc_size - 
+Adding interface s1-eth1 as port 1
+[12:24:10.395] [bmv2] [D] [thread 5817] Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+[12:24:10.438] [bmv2] [D] [thread 5817] Adding interface s1-eth2 as port 2
+[12:24:10.470] [bmv2] [I] [thread 5817] Starting Thrift server on port 9090
+[12:24:10.470] [bmv2] [I] [thread 5817] Thrift server was started
+[12:24:10.474] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Processing packet received on port 1
+[12:24:10.474] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Parser 'parser': start
+[12:24:10.474] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Parser 'parser' entering state 'start'
+[12:24:10.474] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Extracting header 'ethernet'
+[12:24:10.474] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Parser state 'start' has no switch, going to default next state
+[12:24:10.474] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Bytes parsed: 14
+[12:24:10.474] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Parser 'parser': end
+[12:24:10.474] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Pipeline 'ingress': start
+[12:24:10.474] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Applying table 'MyIngress.Enqueue.init_enq_table'
+[12:24:10.474] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Looking up key:
+
+[12:24:10.474] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Table 'MyIngress.Enqueue.init_enq_table': miss
+[12:24:10.474] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Action entry is MyIngress.Enqueue.init_enq - 
+[12:24:10.474] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Action MyIngress.Enqueue.init_enq
+[12:24:10.474] [bmv2] [T] [thread 5823] [0.0] [cxt 0] p4src/buffer_tables.p4(23) Primitive first_tail.read(first_tail_tmp, 0)
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Read register 'first_tail' at index 0 read value 0
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] p4src/buffer_tables.p4(24) Primitive buffer_size.read(buffer_size_tmp, 0)
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Read register 'buffer_size' at index 0 read value 0
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Applying table 'MyIngress.Enqueue.tail_table'
+[12:24:10.475] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Looking up key:
+* first_tail_tmp      : 00
+
+[12:24:10.475] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Table 'MyIngress.Enqueue.tail_table': miss
+[12:24:10.475] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Action entry is MyIngress.Enqueue.set_first_tail_to_one - 
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Action MyIngress.Enqueue.set_first_tail_to_one
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] p4src/buffer_tables.p4(28) Primitive first_tail.write(0, 1)
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Wrote register 'first_tail' at index 0 with value 1
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Applying table 'MyIngress.Enqueue.enqueue_table'
+[12:24:10.475] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Looking up key:
+
+[12:24:10.475] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Table 'MyIngress.Enqueue.enqueue_table': miss
+[12:24:10.475] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Action entry is MyIngress.Enqueue.enqueue_action - 
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Action MyIngress.Enqueue.enqueue_action
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] p4src/buffer_tables.p4(39) Primitive tail_reg.read(tmp_tail, 0)
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Read register 'tail_reg' at index 0 read value 0
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] p4src/buffer_tables.p4(40) Primitive (bit<32>) tmp_tail
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] p4src/buffer_tables.p4(40) Primitive buffer.write((bit<32>) tmp_tail, in_value)
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Wrote register 'buffer' at index 0 with value 1
+[12:24:10.475] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Applying table 'MyIngress.Enqueue.size_table'
+[12:24:10.476] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Looking up key:
+* buffer_size_tmp     : 00
+
+[12:24:10.476] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Table 'MyIngress.Enqueue.size_table': miss
+[12:24:10.476] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Action entry is MyIngress.Enqueue.inc_size - 
+[12:24:10.476] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Action MyIngress.Enqueue.inc_size
+[12:24:10.476] [bmv2] [T] [thread 5823] [0.0] [cxt 0] p4src/buffer_tables.p4(44) Primitive buffer_size_tmp + 1
+[12:24:10.476] [bmv2] [T] [thread 5823] [0.0] [cxt 0] p4src/buffer_tables.p4(44) Primitive buffer_size.write(0, buffer_size_tmp + 1)
+[12:24:10.476] [bmv2] [T] [thread 5823] [0.0] [cxt 0] Wrote register 'buffer_size' at index 0 with value 1
+[12:24:10.476] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Pipeline 'ingress': end
+[12:24:10.476] [bmv2] [D] [thread 5823] [0.0] [cxt 0] Egress port is 0
+[12:24:10.476] [bmv2] [D] [thread 5824] [0.0] [cxt 0] Pipeline 'egress': start
+[12:24:10.476] [bmv2] [D] [thread 5824] [0.0] [cxt 0] Pipeline 'egress': end
+[12:24:10.476] [bmv2] [D] [thread 5824] [0.0] [cxt 0] Deparser 'deparser': start
+[12:24:10.476] [bmv2] [D] [thread 5824] [0.0] [cxt 0] Deparsing header 'ethernet'
+[12:24:10.476] [bmv2] [D] [thread 5824] [0.0] [cxt 0] Deparser 'deparser': end
+[12:24:10.476] [bmv2] [D] [thread 5828] [0.0] [cxt 0] Transmitting packet of size 86 out of port 0
+[12:24:10.678] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Processing packet received on port 2
+[12:24:10.678] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Parser 'parser': start
+[12:24:10.678] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Parser 'parser' entering state 'start'
+[12:24:10.678] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Extracting header 'ethernet'
+[12:24:10.678] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Parser state 'start' has no switch, going to default next state
+[12:24:10.678] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Bytes parsed: 14
+[12:24:10.678] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Parser 'parser': end
+[12:24:10.678] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Pipeline 'ingress': start
+[12:24:10.678] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Applying table 'MyIngress.Enqueue.init_enq_table'
+[12:24:10.678] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Looking up key:
+
+[12:24:10.678] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Table 'MyIngress.Enqueue.init_enq_table': miss
+[12:24:10.678] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Action entry is MyIngress.Enqueue.init_enq - 
+[12:24:10.678] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Action MyIngress.Enqueue.init_enq
+[12:24:10.678] [bmv2] [T] [thread 5823] [1.0] [cxt 0] p4src/buffer_tables.p4(23) Primitive first_tail.read(first_tail_tmp, 0)
+[12:24:10.678] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Read register 'first_tail' at index 0 read value 1
+[12:24:10.678] [bmv2] [T] [thread 5823] [1.0] [cxt 0] p4src/buffer_tables.p4(24) Primitive buffer_size.read(buffer_size_tmp, 0)
+[12:24:10.678] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Read register 'buffer_size' at index 0 read value 1
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Applying table 'MyIngress.Enqueue.tail_table'
+[12:24:10.679] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Looking up key:
+* first_tail_tmp      : 01
+
+[12:24:10.679] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Table 'MyIngress.Enqueue.tail_table': miss
+[12:24:10.679] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Action entry is MyIngress.Enqueue.set_first_tail_to_one - 
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Action MyIngress.Enqueue.set_first_tail_to_one
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] p4src/buffer_tables.p4(28) Primitive first_tail.write(0, 1)
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Wrote register 'first_tail' at index 0 with value 1
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Applying table 'MyIngress.Enqueue.enqueue_table'
+[12:24:10.679] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Looking up key:
+
+[12:24:10.679] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Table 'MyIngress.Enqueue.enqueue_table': miss
+[12:24:10.679] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Action entry is MyIngress.Enqueue.enqueue_action - 
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Action MyIngress.Enqueue.enqueue_action
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] p4src/buffer_tables.p4(39) Primitive tail_reg.read(tmp_tail, 0)
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Read register 'tail_reg' at index 0 read value 0
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] p4src/buffer_tables.p4(40) Primitive (bit<32>) tmp_tail
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] p4src/buffer_tables.p4(40) Primitive buffer.write((bit<32>) tmp_tail, in_value)
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Wrote register 'buffer' at index 0 with value 1
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Applying table 'MyIngress.Enqueue.size_table'
+[12:24:10.679] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Looking up key:
+* buffer_size_tmp     : 01
+
+[12:24:10.679] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Table 'MyIngress.Enqueue.size_table': miss
+[12:24:10.679] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Action entry is MyIngress.Enqueue.inc_size - 
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Action MyIngress.Enqueue.inc_size
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] p4src/buffer_tables.p4(44) Primitive buffer_size_tmp + 1
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] p4src/buffer_tables.p4(44) Primitive buffer_size.write(0, buffer_size_tmp + 1)
+[12:24:10.679] [bmv2] [T] [thread 5823] [1.0] [cxt 0] Wrote register 'buffer_size' at index 0 with value 2
+[12:24:10.679] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Pipeline 'ingress': end
+[12:24:10.680] [bmv2] [D] [thread 5823] [1.0] [cxt 0] Egress port is 0
+[12:24:10.680] [bmv2] [D] [thread 5824] [1.0] [cxt 0] Pipeline 'egress': start
+[12:24:10.680] [bmv2] [D] [thread 5824] [1.0] [cxt 0] Pipeline 'egress': end
+[12:24:10.680] [bmv2] [D] [thread 5824] [1.0] [cxt 0] Deparser 'deparser': start
+[12:24:10.680] [bmv2] [D] [thread 5824] [1.0] [cxt 0] Deparsing header 'ethernet'
+[12:24:10.680] [bmv2] [D] [thread 5824] [1.0] [cxt 0] Deparser 'deparser': end
+[12:24:10.680] [bmv2] [D] [thread 5828] [1.0] [cxt 0] Transmitting packet of size 86 out of port 0
+[12:24:10.997] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Processing packet received on port 2
+[12:24:10.997] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Parser 'parser': start
+[12:24:10.997] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Parser 'parser' entering state 'start'
+[12:24:10.997] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Extracting header 'ethernet'
+[12:24:10.997] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Parser state 'start' has no switch, going to default next state
+[12:24:10.997] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Bytes parsed: 14
+[12:24:10.997] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Parser 'parser': end
+[12:24:10.997] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Pipeline 'ingress': start
+[12:24:10.997] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Applying table 'MyIngress.Enqueue.init_enq_table'
+[12:24:10.997] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Looking up key:
+
+[12:24:10.997] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Table 'MyIngress.Enqueue.init_enq_table': miss
+[12:24:10.997] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Action entry is MyIngress.Enqueue.init_enq - 
+[12:24:10.997] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Action MyIngress.Enqueue.init_enq
+[12:24:10.997] [bmv2] [T] [thread 5823] [2.0] [cxt 0] p4src/buffer_tables.p4(23) Primitive first_tail.read(first_tail_tmp, 0)
+[12:24:10.997] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Read register 'first_tail' at index 0 read value 1
+[12:24:10.997] [bmv2] [T] [thread 5823] [2.0] [cxt 0] p4src/buffer_tables.p4(24) Primitive buffer_size.read(buffer_size_tmp, 0)
+[12:24:10.997] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Read register 'buffer_size' at index 0 read value 2
+[12:24:10.997] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Applying table 'MyIngress.Enqueue.tail_table'
+[12:24:10.997] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Looking up key:
+* first_tail_tmp      : 01
+
+[12:24:10.997] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Table 'MyIngress.Enqueue.tail_table': miss
+[12:24:10.997] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Action entry is MyIngress.Enqueue.set_first_tail_to_one - 
+[12:24:10.997] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Action MyIngress.Enqueue.set_first_tail_to_one
+[12:24:10.997] [bmv2] [T] [thread 5823] [2.0] [cxt 0] p4src/buffer_tables.p4(28) Primitive first_tail.write(0, 1)
+[12:24:10.997] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Wrote register 'first_tail' at index 0 with value 1
+[12:24:10.997] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Applying table 'MyIngress.Enqueue.enqueue_table'
+[12:24:10.998] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Looking up key:
+
+[12:24:10.998] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Table 'MyIngress.Enqueue.enqueue_table': miss
+[12:24:10.998] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Action entry is MyIngress.Enqueue.enqueue_action - 
+[12:24:10.998] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Action MyIngress.Enqueue.enqueue_action
+[12:24:10.998] [bmv2] [T] [thread 5823] [2.0] [cxt 0] p4src/buffer_tables.p4(39) Primitive tail_reg.read(tmp_tail, 0)
+[12:24:10.998] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Read register 'tail_reg' at index 0 read value 0
+[12:24:10.998] [bmv2] [T] [thread 5823] [2.0] [cxt 0] p4src/buffer_tables.p4(40) Primitive (bit<32>) tmp_tail
+[12:24:10.998] [bmv2] [T] [thread 5823] [2.0] [cxt 0] p4src/buffer_tables.p4(40) Primitive buffer.write((bit<32>) tmp_tail, in_value)
+[12:24:10.998] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Wrote register 'buffer' at index 0 with value 1
+[12:24:10.998] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Applying table 'MyIngress.Enqueue.size_table'
+[12:24:10.998] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Looking up key:
+* buffer_size_tmp     : 02
+
+[12:24:10.998] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Table 'MyIngress.Enqueue.size_table': miss
+[12:24:10.998] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Action entry is MyIngress.Enqueue.inc_size - 
+[12:24:10.998] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Action MyIngress.Enqueue.inc_size
+[12:24:10.998] [bmv2] [T] [thread 5823] [2.0] [cxt 0] p4src/buffer_tables.p4(44) Primitive buffer_size_tmp + 1
+[12:24:10.998] [bmv2] [T] [thread 5823] [2.0] [cxt 0] p4src/buffer_tables.p4(44) Primitive buffer_size.write(0, buffer_size_tmp + 1)
+[12:24:10.998] [bmv2] [T] [thread 5823] [2.0] [cxt 0] Wrote register 'buffer_size' at index 0 with value 3
+[12:24:10.998] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Pipeline 'ingress': end
+[12:24:10.998] [bmv2] [D] [thread 5823] [2.0] [cxt 0] Egress port is 0
+[12:24:10.998] [bmv2] [D] [thread 5824] [2.0] [cxt 0] Pipeline 'egress': start
+[12:24:10.998] [bmv2] [D] [thread 5824] [2.0] [cxt 0] Pipeline 'egress': end
+[12:24:10.998] [bmv2] [D] [thread 5824] [2.0] [cxt 0] Deparser 'deparser': start
+[12:24:10.998] [bmv2] [D] [thread 5824] [2.0] [cxt 0] Deparsing header 'ethernet'
+[12:24:10.998] [bmv2] [D] [thread 5824] [2.0] [cxt 0] Deparser 'deparser': end
+[12:24:10.998] [bmv2] [D] [thread 5828] [2.0] [cxt 0] Transmitting packet of size 90 out of port 0
+[12:24:16.877] [bmv2] [T] [thread 5857] bm_get_config
+[12:24:16.878] [bmv2] [T] [thread 5857] bm_mt_get_entries
+[12:24:16.879] [bmv2] [T] [thread 5857] bm_mt_get_entries
+[12:24:16.879] [bmv2] [T] [thread 5857] bm_reset_state
+[12:24:16.880] [bmv2] [D] [thread 5857] Resetting simple_switch target-specific state
+[12:24:16.880] [bmv2] [D] [thread 5857] resetting PRE state
+[12:24:16.880] [bmv2] [T] [thread 5857] bm_table_add_entry
+[12:24:16.880] [bmv2] [D] [thread 5857] Entry 0 added to table 'MyIngress.Enqueue.tail_table'
+[12:24:16.880] [bmv2] [D] [thread 5857] Dumping entry 0
+Match key:
+* first_tail_tmp      : EXACT     01
+Action entry: MyIngress.Enqueue.inc_tail - 
+
+[12:24:16.881] [bmv2] [T] [thread 5857] bm_table_add_entry
+[12:24:16.881] [bmv2] [D] [thread 5857] Entry 0 added to table 'MyIngress.Enqueue.size_table'
+[12:24:16.881] [bmv2] [D] [thread 5857] Dumping entry 0
+Match key:
+* buffer_size_tmp     : EXACT     08
+Action entry: NoAction - 
+
+open: No such file or directory
+open: No such file or directory
