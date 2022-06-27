@@ -2,9 +2,10 @@
 #include <core.p4>
 #include <v1model.p4>
 
-#include "include/headers.p4"
+#include "include/define.p4"
 #include "include/parsers.p4"
-#include "ring_buffer.p4"
+/*#include "ring_buffer.p4"*/
+#include "buffer_tables.p4"
 
 /*************************************************************************
 ************   C H E C K S U M    V E R I F I C A T I O N   *************
@@ -44,12 +45,12 @@ control MyIngress(inout headers hdr,
         /* define the list of actions */
         actions = {
             forward;
-	    enqueue_buffer;
+/*	    enqueue_buffer;
 	    dequeue_buffer(meta.deq_value);
 	    inc_head;
 	    dec_head;
 	    inc_tail;
-	    dec_tail;
+	    dec_tail;*/
             drop;
             NoAction;
         }
@@ -58,6 +59,10 @@ control MyIngress(inout headers hdr,
     }
 
     apply {
+	/*tail_table.apply();
+	enqueue_table.apply();
+	size_table.apply();*/
+	Enqueue.apply(hdr, meta, standard_metadata);
         dmac.apply();
 
     }

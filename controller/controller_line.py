@@ -41,10 +41,14 @@ class RoutingController(object):
                 # table_add function: create a rule in "dmac" table, the key is the dmac address
                 # the action is "forward", and the parameter is the output port id
                 # E.g., when receiving a packet to "00:00:0a:00:00:01", "forward" the packet to "1" port.
-               controller.table_add("dmac", "enqueue_buffer", ["00:00:0a:00:00:01"], ["0x00000a000001"])
-               controller.table_add("dmac", "inc_head", ["00:00:0a:00:00:02"], ["1"])
-                
+               controller.table_add("dmac", "forward", ["00:00:0a:00:00:01"], ["1"])
+        
+	       controller.table_add("tail_table", "set_first_tail_to_one", ["0"], []) 
+	       controller.table_add("tail_table", "inc_tail", ["1"], [])
 
+	       controller.table_add("enqueue_table", "enqueue_action", [], ["2"])
+
+	       controller.table_add("size_table", "NoAction", ["8"], [])
     def main(self):
         self.route()
 
