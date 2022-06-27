@@ -59,11 +59,8 @@ control MyIngress(inout headers hdr,
     }
 
     apply {
-	/*tail_table.apply();
-	enqueue_table.apply();
-	size_table.apply();*/
 	Enqueue.apply(hdr, meta, standard_metadata);
-        dmac.apply();
+        /*dmac.apply();*/
 
     }
 }

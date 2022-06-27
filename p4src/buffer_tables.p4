@@ -53,8 +53,7 @@ control Enqueue(inout headers hdr,
 	    init_flags;
 	}
 	
-	size = 256;
-	default_actions = init_flags;
+	default_action = init_flags;
     }
 
     table tail_table {
@@ -76,7 +75,6 @@ control Enqueue(inout headers hdr,
 	    enqueue_action(1);
 	}
 	
-	size = 256;
 	default_action = enqueue_action(1);
     }
 
