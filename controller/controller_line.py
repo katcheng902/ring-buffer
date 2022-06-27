@@ -42,11 +42,15 @@ class RoutingController(object):
                 # the action is "forward", and the parameter is the output port id
                 # E.g., when receiving a packet to "00:00:0a:00:00:01", "forward" the packet to "1" port.
                controller.table_add("dmac", "forward", ["00:00:0a:00:00:01"], ["1"])
+               controller.table_add("dmac", "drop", ["00:00:0a:00:00:02"], [])
 
-	       controller.table_add("tail_table", "set_first_tail_to_one", ["0"], []) 
-	       controller.table_add("tail_table", "inc_tail", ["1"], [])
 
-	       controller.table_add("size_table", "NoAction", ["8"], [])
+	       controller.table_add("tail_table", "set_first_tail_to_one", ["0x0"], []) 
+	       controller.table_add("tail_table", "inc_tail", ["0x1"], [])
+
+	       controller.table_add("size_table", "NoAction", ["0x8"], [])
+
+	       controller.table_add("dequeue_table", "NoAction", ["0x0"], [])
     def main(self):
         self.route()
 

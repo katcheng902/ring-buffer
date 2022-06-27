@@ -59,9 +59,10 @@ control MyIngress(inout headers hdr,
     }
 
     apply {
-	Enqueue.apply(hdr, meta, standard_metadata);
-        /*dmac.apply();*/
-
+	switch (dmac.apply().action_run) {
+	    drop: {Enqueue.apply(hdr, meta, standard_metadata);}
+	    forward: {Dequeue.apply(hdr, meta, standard_metadata);}
+	}
     }
 }
 

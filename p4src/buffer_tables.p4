@@ -97,7 +97,7 @@ control Enqueue(inout headers hdr,
     }
         
 }
-/*
+
 control Dequeue(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
@@ -115,10 +115,10 @@ control Dequeue(inout headers hdr,
         buffer.read(out_value, (bit<32>)tmp_head);
     }
 
-    action dec_head() {
+    action inc_head() {
 	bit<POINTER_SIZE> tmp_head;
         head_reg.read(tmp_head, 0);
-        head_reg.write(0, tmp_head - 1);
+        head_reg.write(0, tmp_head + 1);
     }
 
     action dec_size() {
@@ -139,19 +139,19 @@ control Dequeue(inout headers hdr,
 	}
 
 	actions = {
-	    dequeue_action;
+	    dequeue_action(meta.deq_value);
 	    NoAction;
 	}
 
-	default_action = dequeue_action;
+	default_action = dequeue_action(meta.deq_value);
     }
 
     table head_table {
 	actions = {
-	    dec_head;
+	    inc_head;
 	}
 
-	default_action = dec_head;
+	default_action = inc_head;
     }
 
     table dec_size_table {
@@ -165,11 +165,11 @@ control Dequeue(inout headers hdr,
     apply {
 	init_deq_table.apply();
 	switch (dequeue_table.apply().action_run) {
-	    NoAction: {
+	    dequeue_action: {
 		head_table.apply();
 	    	dec_size_table.apply();
 	    }
 	}
     }
 
-}*/
+}
