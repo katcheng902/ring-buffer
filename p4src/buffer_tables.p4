@@ -6,7 +6,7 @@ register<bit<POINTER_SIZE>>(1) head_reg; /*POINTER_SIZE = log(CAPACITY)*/
 register<bit<POINTER_SIZE>>(1) tail_reg;
 register<bit<SIZE_REG>>(1) buffer_size;
 
-register<bit<ELT_SIZE>>(CAPACITY) buffer;
+register<bit<ELT_SIZE>>(CAPACITY) ring_buffer;
 
 /*FLAGS*/
 register<bit<1>>(1) first_tail; /*b/c can't initialize this type to -1: 0 if first time around, 1 otherwise*/
@@ -37,7 +37,7 @@ control Enqueue(inout headers hdr,
     action enqueue_action(in bit<ELT_SIZE> in_value) {
 	bit<POINTER_SIZE> tmp_tail;
 	tail_reg.read(tmp_tail, 0);
-	buffer.write((bit<32>) tmp_tail, in_value);
+	ring_buffer.write((bit<32>) tmp_tail, in_value);
     }
 
     action inc_size() {
@@ -112,7 +112,7 @@ control Dequeue(inout headers hdr,
 	bit<POINTER_SIZE> tmp_head;
         head_reg.read(tmp_head, 0);
 
-        buffer.read(out_value, (bit<32>)tmp_head);
+        ring_buffer.read(out_value, (bit<32>)tmp_head);
     }
 
     action inc_head() {
