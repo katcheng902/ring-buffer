@@ -1,6 +1,9 @@
+import sys
+
 from p4utils.utils.topology import Topology
 from p4utils.utils.sswitch_API import SimpleSwitchAPI
-import sys
+
+import control_ring_buffer
 
 class RoutingController(object):
 
@@ -34,25 +37,25 @@ class RoutingController(object):
         for controller in self.controllers.values():
             controller.table_set_default("dmac", "drop", [])
 
-    # Create forwarding rules for the dmac table
     def route(self):
         for sw_name, controller in self.controllers.items():
             if sw_name == "s1":
-                # table_add function: create a rule in "dmac" table, the key is the dmac address
-                # the action is "forward", and the parameter is the output port id
-                # E.g., when receiving a packet to "00:00:0a:00:00:01", "forward" the packet to "1" port.
-               controller.table_add("dmac", "forward", ["00:00:0a:00:00:01"], ["1"])
-               controller.table_add("dmac", "drop", ["00:00:0a:00:00:02"], [])
+                controller.table_add("dmac", "NoAction", ["00:00:0a:00:00:01"], ["1"])
+                controller.table_add("dmac", "drop", ["00:00:0a:00:00:02"], [])
 
+                controller.table_add("tail_table", "set_first_tail_to_one", ["0x0"], [])
+                controller.table_add("tail_table", "inc_tail", ["0x1"], [])
 
-	       controller.table_add("tail_table", "set_first_tail_to_one", ["0x0"], []) 
-	       controller.table_add("tail_table", "inc_tail", ["0x1"], [])
+                controller.table_add("size_table", "NoAction", ["0x8"], [])
 
-	       controller.table_add("size_table", "NoAction", ["0x8"], [])
-
-	       controller.table_add("dequeue_table", "NoAction", ["0x0"], [])
+                controller.table_add("dequeue_table", "NoAction", ["0x0"], [])
+    
     def main(self):
         self.route()
+        for p4switch in self.topo.get_p4switches():
+            thrift_port = self.topo.get_thrift_port(p4switch)
+            thrift_ip = self.topo.get_thrift_ip(p4switch)
+            control_ring_buffer.enqueue(ThriftAPI(thrift_port, thrift_ip, "none"), 2) #what is pre type???
 
 
 if __name__ == "__main__":

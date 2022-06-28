@@ -1,18 +1,19 @@
-#from p4utils.utils.topology import Topology
-#from p4utils.utils.sswitch_API import SimpleSwitchAPI
-import p4utils
+from p4utils.utils.topology import Topology
+from p4utils.utils.sswitch_API import SimpleSwitchAPI
+from p4utils.utils.thrift_API import ThriftAPI
+
 import sys
 
 CAPACITY = 8
 
-def enqueue(in_value):
-    tail_tmp = register_read(tail_reg, 0)
-    register_write(tail_reg, 0, (tail_tmp+1) % CAPACITY)
+def enqueue(thrift_api, in_value):
+    tail_tmp = thrift_api.register_read("tail_reg", 0)
+    register_write("tail_reg", 0, (tail_tmp+1) % CAPACITY)
 
-    register_write(ring_buffer, (tail_tmp+1) % CAPACITY, in_value)
+    register_write("ring_buffer", (tail_tmp+1) % CAPACITY, in_value)
 
-    size_tmp = register_read(buffer_size, 0)
-    register_write(buffer_size, 0, min(size_tmp+1, CAPACITY))
+    size_tmp = register_read("buffer_size", 0)
+    register_write("buffer_size", 0, min(size_tmp+1, CAPACITY))
 
 
 def dequeue():
