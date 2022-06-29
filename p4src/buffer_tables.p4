@@ -13,7 +13,7 @@ register<bit<1>>(1) first_tail; /*b/c can't initialize this type to -1: 0 if fir
 
 control Enqueue(inout headers hdr,
                   inout metadata meta,
-                  inout standard_metadata_t standard_metadata) {
+                  inout standard_metadata_t standard_metadata, in bit<ELT_SIZE> enq_value) {
 
     bit<1> first_tail_tmp;
     bit<SIZE_REG> buffer_size_tmp;
@@ -69,10 +69,10 @@ control Enqueue(inout headers hdr,
 
     table enqueue_table {
 	actions = {
-	    enqueue_action(1);
+	    enqueue_action(enq_value);
 	}
 	
-	default_action = enqueue_action(1);
+	default_action = enqueue_action(enq_value);
     }
 
     table size_table {
@@ -100,7 +100,7 @@ control Enqueue(inout headers hdr,
 
 control Dequeue(inout headers hdr,
                   inout metadata meta,
-                  inout standard_metadata_t standard_metadata) {
+                  inout standard_metadata_t standard_metadata, out bit<ELT_SIZE> deq_value) {
 
     bit<SIZE_REG> buffer_size_tmp;
 
@@ -139,11 +139,11 @@ control Dequeue(inout headers hdr,
 	}
 
 	actions = {
-	    dequeue_action(meta.deq_value);
+	    dequeue_action(deq_value);
 	    NoAction;
 	}
 
-	default_action = dequeue_action(meta.deq_value);
+	default_action = dequeue_action(deq_value);
     }
 
     table head_table {

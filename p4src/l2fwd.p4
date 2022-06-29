@@ -45,12 +45,6 @@ control MyIngress(inout headers hdr,
         /* define the list of actions */
         actions = {
             forward;
-/*	    enqueue_buffer;
-	    dequeue_buffer(meta.deq_value);
-	    inc_head;
-	    dec_head;
-	    inc_tail;
-	    dec_tail;*/
             drop;
             NoAction;
         }
@@ -60,8 +54,8 @@ control MyIngress(inout headers hdr,
 
     apply {
 	switch (dmac.apply().action_run) {
-	    drop: {Enqueue.apply(hdr, meta, standard_metadata);}
-	    forward: {Dequeue.apply(hdr, meta, standard_metadata);}
+	    drop: {Enqueue.apply(hdr, meta, standard_metadata, 2);}
+	    default: {Dequeue.apply(hdr, meta, standard_metadata, meta.deq_value);}
 	}
     }
 }
