@@ -43,9 +43,4 @@ def read_all_regs(thrift_api):
     buf_head = thrift_api.register_read("ring_buffer", head)
     buf_tail = thrift_api.register_read("ring_buffer", tail)
 
-    print("head: ", head)
-    print("tail: ", tail)
-    print("size: ", sz)
-    print("buffer[head]: ", buf_head)	
-    print("buffer[tail]: ", buf_tail)
-    print "\n"	
+    print("head: %d,    tail: %d,    size: %d,    buffer[head]: %d,    buffer[tail]: %d\n" % (head, tail, sz, buf_head, buf_tail))
