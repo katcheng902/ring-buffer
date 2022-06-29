@@ -7,26 +7,45 @@ import sys
 CAPACITY = 8
 
 def enqueue(thrift_api, in_value):
+    first_tail_tmp = thrift_api.register_read("first_tail", 0)
     tail_tmp = thrift_api.register_read("tail_reg", 0)
-    register_write("tail_reg", 0, (tail_tmp+1) % CAPACITY)
 
-    register_write("ring_buffer", (tail_tmp+1) % CAPACITY, in_value)
+    if (first_tail_tmp == 0):
+        thrift_api.register_write("first_tail", 0, 1)
+    else:
+        tail_tmp = (tail_tmp+1) % CAPACITY
+        thrift_api.register_write("tail_reg", 0, tail_tmp)
 
-    size_tmp = register_read("buffer_size", 0)
-    register_write("buffer_size", 0, min(size_tmp+1, CAPACITY))
+    thrift_api.register_write("ring_buffer", tail_tmp, in_value)
+
+    size_tmp = thrift_api.register_read("buffer_size", 0)
+    thrift_api.register_write("buffer_size", 0, min(size_tmp+1, CAPACITY))
 
 
-def dequeue():
-    size_tmp = register_read(buffer_size, 0)
+def dequeue(thrift_api):
+    size_tmp = thrift_api.register_read("buffer_size", 0)
 
     if (size_tmp > 0):
-	head_tmp = register_read(head_reg, 0)
-	out_value = register_read(ring_buffer, head_tmp)
+	head_tmp = thrift_api.register_read("head_reg", 0)
+	out_value = thrift_api.register_read("ring_buffer", head_tmp)
 	
-	register_write(head_reg, 0, (head+1) % CAPACITY)
-	register_write(buffer_size, 0, size_tmp-1)
+	thrift_api.register_write("head_reg", 0, (head_tmp+1) % CAPACITY)
+	thrift_api.register_write("buffer_size", 0, size_tmp-1)
 
 	return out_value
 
     return None
 
+def read_all_regs(thrift_api):
+    head = thrift_api.register_read("head_reg", 0)
+    tail = thrift_api.register_read("tail_reg", 0)
+    sz = thrift_api.register_read("buffer_size", 0)
+    buf_head = thrift_api.register_read("ring_buffer", head)
+    buf_tail = thrift_api.register_read("ring_buffer", tail)
+
+    print("head: ", head)
+    print("tail: ", tail)
+    print("size: ", sz)
+    print("buffer[head]: ", buf_head)	
+    print("buffer[tail]: ", buf_tail)
+    print "\n"	

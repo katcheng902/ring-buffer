@@ -2,6 +2,7 @@ import sys
 
 from p4utils.utils.topology import Topology
 from p4utils.utils.sswitch_API import SimpleSwitchAPI
+from p4utils.utils.thrift_API import ThriftAPI
 
 import control_ring_buffer
 
@@ -54,9 +55,20 @@ class RoutingController(object):
         self.route()
         for p4switch in self.topo.get_p4switches():
             thrift_port = self.topo.get_thrift_port(p4switch)
-            thrift_ip = self.topo.get_thrift_ip(p4switch)
-            control_ring_buffer.enqueue(ThriftAPI(thrift_port, thrift_ip, "none"), 2) #what is pre type???
+            #thrift_ip = self.topo.get_thrift_ip(p4switch)
+            thrift_ip = "0.0.0.0"
+	    thrift = ThriftAPI(thrift_port, thrift_ip, "none")
+            control_ring_buffer.read_all_regs(thrift)
 
+            control_ring_buffer.enqueue(thrift, 2) #what is pre type???
+            control_ring_buffer.read_all_regs(thrift)
+
+            control_ring_buffer.enqueue(thrift, 3)
+            control_ring_buffer.read_all_regs(thrift)
+
+            out_value = control_ring_buffer.dequeue(thrift)
+            print("dequeued ", out_value)
+            control_ring_buffer.read_all_regs(thrift)
 
 if __name__ == "__main__":
     controller = RoutingController().main()
