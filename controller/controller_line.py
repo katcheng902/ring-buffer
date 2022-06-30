@@ -42,7 +42,7 @@ class RoutingController(object):
     def route(self):
         for sw_name, controller in self.controllers.items():
             if sw_name == "s1":
-                controller.table_add("dmac", "NoAction", ["00:00:0a:00:00:01"], [])
+                controller.table_add("dmac", "forward", ["00:00:0a:00:00:01"], ["1"])
                 controller.table_add("dmac", "drop", ["00:00:0a:00:00:02"], [])
 
                 controller.table_add("tail_table", "set_first_tail_to_one", ["0x0"], [])
@@ -63,8 +63,8 @@ class RoutingController(object):
             print("INITIAL: " +  control_ring_buffer.read_all_regs(thrift))
 
             for _ in range(5):
-                mode = "0"
-                op = "1"
+                mode = str(random.randint(0, 1))
+                op = str(random.randint(0, 1))
                 rand_client = random.randint(1,9)
                 client_ip = "00000000" + "00000000" + "00001010" + "00000000" + "00000000" + "0000" + str(format(rand_client, 'b'))
 

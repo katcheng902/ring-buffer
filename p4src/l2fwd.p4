@@ -54,8 +54,8 @@ control MyIngress(inout headers hdr,
 
     apply {
 	switch (dmac.apply().action_run) {
-	    drop: {Enqueue.apply(hdr, meta, standard_metadata, 2);}
-	    default: {Dequeue.apply(hdr, meta, standard_metadata, meta.deq_value);}
+	    forward: {Enqueue.apply(hdr.ethernet.dstAddr);}
+	    drop: {Dequeue.apply(meta.deq_value);}
 	}
     }
 }
