@@ -6,6 +6,7 @@ import sys
 
 CAPACITY = 8
 
+#need restrictions on type?
 def enqueue(thrift_api, in_value):
     first_tail_tmp = thrift_api.register_read("first_tail", 0)
     tail_tmp = thrift_api.register_read("tail_reg", 0)
@@ -43,4 +44,4 @@ def read_all_regs(thrift_api):
     buf_head = thrift_api.register_read("ring_buffer", head)
     buf_tail = thrift_api.register_read("ring_buffer", tail)
 
-    print("head: %d,    tail: %d,    size: %d,    buffer[head]: %d,    buffer[tail]: %d\n" % (head, tail, sz, buf_head, buf_tail))
+    return("head: %d,    tail: %d,    size: %d,    buffer[head]: %d,    buffer[tail]: %d\n" % (head, tail, sz, buf_head, buf_tail))

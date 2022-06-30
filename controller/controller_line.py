@@ -5,6 +5,7 @@ from p4utils.utils.sswitch_API import SimpleSwitchAPI
 from p4utils.utils.thrift_API import ThriftAPI
 
 import control_ring_buffer
+import random
 
 class RoutingController(object):
 
@@ -41,7 +42,7 @@ class RoutingController(object):
     def route(self):
         for sw_name, controller in self.controllers.items():
             if sw_name == "s1":
-                controller.table_add("dmac", "NoAction", ["00:00:0a:00:00:01"], ["1"])
+                controller.table_add("dmac", "NoAction", ["00:00:0a:00:00:01"], [])
                 controller.table_add("dmac", "drop", ["00:00:0a:00:00:02"], [])
 
                 controller.table_add("tail_table", "set_first_tail_to_one", ["0x0"], [])
@@ -52,23 +53,34 @@ class RoutingController(object):
                 controller.table_add("dequeue_table", "NoAction", ["0x0"], [])
     
     def main(self):
-        self.route()
+	self.route()
+
+	#using the control plane API example
         for p4switch in self.topo.get_p4switches():
             thrift_port = self.topo.get_thrift_port(p4switch)
-            #thrift_ip = self.topo.get_thrift_ip(p4switch)
             thrift_ip = "0.0.0.0"
 	    thrift = ThriftAPI(thrift_port, thrift_ip, "none")
-            control_ring_buffer.read_all_regs(thrift)
+            print("INITIAL: " +  control_ring_buffer.read_all_regs(thrift))
 
-            control_ring_buffer.enqueue(thrift, 2) #what is pre type???
-            control_ring_buffer.read_all_regs(thrift)
+            for _ in range(5):
+                mode = "0"
+                op = "1"
+                rand_client = random.randint(1,9)
+                client_ip = "00000000" + "00000000" + "00001010" + "00000000" + "00000000" + "0000" + str(format(rand_client, 'b'))
 
-            control_ring_buffer.enqueue(thrift, 3)
-            control_ring_buffer.read_all_regs(thrift)
+                enq_value = int(mode+op+client_ip, 2)
+
+                control_ring_buffer.enqueue(thrift, enq_value)
+		print("ENQUEUE: " + control_ring_buffer.read_all_regs(thrift))
+               
+                if (rand_client % 3 == 0):
+                    out_value = control_ring_buffer.dequeue(thrift)
+                    print("DEQUEUE: " + str(out_value))
+                    print("\t " + control_ring_buffer.read_all_regs(thrift))
 
             out_value = control_ring_buffer.dequeue(thrift)
-            print("dequeued ", out_value)
-            control_ring_buffer.read_all_regs(thrift)
+            print("DEQUEUE: " + str(out_value))
+            print("\t " + control_ring_buffer.read_all_regs(thrift))
 
 if __name__ == "__main__":
     controller = RoutingController().main()
